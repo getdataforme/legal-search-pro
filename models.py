@@ -31,7 +31,7 @@ class Document(BaseModel):
     description: str = Field(..., description="Document description")
     pages: str = Field(..., description="Number of pages")
     doc_link: str = Field(..., description="Link to document")
-    path: str = Field(..., description="Document path")
+    path: Optional[str] = Field(None, description="Document path")
 
 class LegalCase(BaseModel):
     id: Optional[PyObjectId] = Field(default_factory=PyObjectId, alias="_id")
