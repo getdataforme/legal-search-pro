@@ -190,12 +190,6 @@ class LegalCasesDashboard {
                         <button class="btn btn-outline-primary" onclick="dashboard.viewCase('${caseItem._id}')">
                             <i class="bi bi-eye"></i>
                         </button>
-                        <button class="btn btn-outline-warning" onclick="dashboard.editCase('${caseItem._id}')">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                        <button class="btn btn-outline-danger" onclick="dashboard.deleteCase('${caseItem._id}')">
-                            <i class="bi bi-trash"></i>
-                        </button>
                     </div>
                 </td>
             </tr>
