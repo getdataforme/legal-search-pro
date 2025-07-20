@@ -89,25 +89,53 @@ class Document(BaseModel):
 
 class LegalCase(BaseModel):
     id: Optional[PyObjectId] = Field(default_factory=PyObjectId, alias="_id")
-    case_number: str = Field(..., description="Unique case number")
-    description: str = Field(..., description="Case description")
-    location: str = Field(..., description="Court location/division")
-    ucn: str = Field(..., description="Uniform case number")
-    case_type: str = Field(..., description="Type of case")
-    status: str = Field(..., description="Current case status")
-    judge_name: str = Field(..., description="Assigned judge name")
-    filed_date: str = Field(..., description="Date case was filed")
-    parties: List[Party] = Field(..., description="List of parties involved")
-    documents: List[Document] = Field(..., description="List of case documents")
-    actor_id: str = Field(..., alias="actor-id", description="Actor ID")
-    county: str = Field(..., description="County where case is filed")
-    court_id: str = Field(..., alias="court-id", description="Court identifier")
-    crawled_date: str = Field(..., description="Date when case was crawled")
+    case_number: Optional[str] = Field(None, description="Unique case number")
+    description: Optional[str] = Field(None, description="Case description")
+    location: Optional[str] = Field(None, description="Court location/division")
+    ucn: Optional[str] = Field(None, description="Uniform case number")
+    case_type: Optional[str] = Field(None, description="Type of case")
+    status: Optional[str] = Field(None, description="Current case status")
+    judge_name: Optional[str] = Field(None, description="Assigned judge name")
+    filed_date: Optional[str] = Field(None, description="Date case was filed")
+    parties: Optional[List[Party]] = Field(default_factory=list, description="List of parties involved")
+    documents: Optional[List[Document]] = Field(default_factory=list, description="List of case documents")
+    actor_id: Optional[str] = Field(None, alias="actor-id", description="Actor ID")
+    county: Optional[str] = Field(None, description="County where case is filed")
+    court_id: Optional[str] = Field(None, alias="court-id", description="Court identifier")
+    crawled_date: Optional[str] = Field(None, description="Date when case was crawled")
 
     class Config:
         populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
+        extra = "ignore"  # Ignore extra fields
+        
+    def __init__(self, **data):
+        # Set default values for missing required fields
+        if not data.get('case_number'):
+            data['case_number'] = f"CASE-{str(data.get('_id', 'UNKNOWN'))[:8]}"
+        if not data.get('description'):
+            data['description'] = 'Case description not available'
+        if not data.get('ucn'):
+            data['ucn'] = f"UCN-{str(data.get('_id', 'UNKNOWN'))[:8]}"
+        if not data.get('judge_name'):
+            data['judge_name'] = 'Judge not assigned'
+        if not data.get('filed_date'):
+            data['filed_date'] = 'Date not available'
+        if not data.get('case_type'):
+            data['case_type'] = 'Unknown'
+        if not data.get('status'):
+            data['status'] = 'Unknown'
+        if not data.get('location'):
+            data['location'] = 'Location not specified'
+        if not data.get('county'):
+            data['county'] = 'Unknown'
+        if not data.get('parties'):
+            data['parties'] = []
+        if not data.get('documents'):
+            data['documents'] = []
+            
+        super().__init__(**data)
 
 class LegalCaseCreate(BaseModel):
     case_number: str
