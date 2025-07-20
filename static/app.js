@@ -130,6 +130,7 @@ class LegalCasesDashboard {
             this.renderCasesTable();
             this.renderPagination();
             this.updateActiveFilters();
+            this.updateStats();
             
         } catch (error) {
             console.error('Failed to load cases:', error);
@@ -186,13 +187,13 @@ class LegalCasesDashboard {
                 <td>${caseItem.county}</td>
                 <td>
                     <div class="btn-group btn-group-sm">
-                        <button class="btn btn-outline-primary" onclick="dashboard.viewCase('${caseItem.id}')">
+                        <button class="btn btn-outline-primary" onclick="dashboard.viewCase('${caseItem._id}')">
                             <i class="bi bi-eye"></i>
                         </button>
-                        <button class="btn btn-outline-warning" onclick="dashboard.editCase('${caseItem.id}')">
+                        <button class="btn btn-outline-warning" onclick="dashboard.editCase('${caseItem._id}')">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <button class="btn btn-outline-danger" onclick="dashboard.deleteCase('${caseItem.id}')">
+                        <button class="btn btn-outline-danger" onclick="dashboard.deleteCase('${caseItem._id}')">
                             <i class="bi bi-trash"></i>
                         </button>
                     </div>
@@ -302,13 +303,16 @@ class LegalCasesDashboard {
 
     async updateStats() {
         try {
-            // Get all cases to calculate stats
-            const response = await fetch('/search/?page_size=1000');
+            // Get all cases to calculate stats - use smaller page size
+            const response = await fetch('/search/?page=1&page_size=100');
             const data = await response.json();
             const allCases = data.results || [];
+            
+            // Use total_count from API response which is more accurate
+            const totalFromAPI = data.total_count || 0;
 
             const stats = {
-                total: allCases.length,
+                total: totalFromAPI,
                 pending: allCases.filter(c => c.status === 'Pending').length,
                 active: allCases.filter(c => c.status === 'Active').length,
                 recent: allCases.filter(c => {
@@ -326,6 +330,11 @@ class LegalCasesDashboard {
 
         } catch (error) {
             console.log('Stats not available in offline mode');
+            // Set default values when offline
+            $('#totalCases').text('0');
+            $('#pendingCases').text('0');
+            $('#activeCases').text('0');
+            $('#recentCases').text('0');
         }
     }
 
