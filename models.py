@@ -21,17 +21,71 @@ class PyObjectId(ObjectId):
         return schema
 
 class Party(BaseModel):
-    name: str = Field(..., description="Name of the party")
-    type: str = Field(..., description="Type of party (Plaintiff, Defendant, etc.)")
+    name: Optional[str] = Field(None, description="Name of the party")
+    type: Optional[str] = Field(None, description="Type of party (Plaintiff, Defendant, etc.)")
     attorney: Optional[str] = Field(None, description="Attorney name")
     atty_phone: Optional[str] = Field(None, description="Attorney phone number")
+    
+    # Handle different data formats
+    first_name: Optional[str] = Field(None, alias="First Name")
+    middle_name: Optional[str] = Field(None, alias="Middle Name")
+    last_name: Optional[str] = Field(None, alias="Last Name")
+    party_association: Optional[str] = Field(None, alias="Party Association")
+    
+    class Config:
+        populate_by_name = True
+        extra = "ignore"  # Ignore extra fields
+    
+    def __init__(self, **data):
+        # Construct name from first/middle/last if name not provided
+        if not data.get('name') and (data.get('First Name') or data.get('first_name')):
+            parts = []
+            for key in ['First Name', 'first_name']:
+                if data.get(key):
+                    parts.append(data[key])
+                    break
+            for key in ['Middle Name', 'middle_name']:
+                if data.get(key):
+                    parts.append(data[key])
+                    break
+            for key in ['Last Name', 'last_name']:
+                if data.get(key):
+                    parts.append(data[key])
+                    break
+            if parts:
+                data['name'] = ' '.join(filter(None, parts))
+        
+        # Use party association as type if type not provided
+        if not data.get('type') and data.get('Party Association'):
+            data['type'] = data['Party Association'] or 'Unknown'
+            
+        super().__init__(**data)
 
 class Document(BaseModel):
-    date: str = Field(..., description="Document date")
-    description: str = Field(..., description="Document description")
-    pages: str = Field(..., description="Number of pages")
-    doc_link: str = Field(..., description="Link to document")
+    date: Optional[str] = Field(None, description="Document date")
+    description: Optional[str] = Field(None, description="Document description")
+    pages: Optional[str] = Field(None, description="Number of pages")
+    doc_link: Optional[str] = Field(None, description="Link to document")
     path: Optional[str] = Field(None, description="Document path")
+    filename: Optional[str] = Field(None, description="Document filename")
+    
+    class Config:
+        extra = "ignore"  # Ignore extra fields
+    
+    def __init__(self, **data):
+        # Use filename as description if description not provided
+        if not data.get('description') and data.get('filename'):
+            data['description'] = data['filename']
+        
+        # Set default values
+        if not data.get('date'):
+            data['date'] = 'Unknown'
+        if not data.get('pages'):
+            data['pages'] = 'Unknown'
+        if not data.get('doc_link'):
+            data['doc_link'] = '#'
+            
+        super().__init__(**data)
 
 class LegalCase(BaseModel):
     id: Optional[PyObjectId] = Field(default_factory=PyObjectId, alias="_id")

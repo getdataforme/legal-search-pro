@@ -5,8 +5,7 @@ from typing import Optional
 class Settings:
     # MongoDB Configuration
     MONGODB_URL: str = os.getenv(
-        "MONGODB_URL",
-        "mongodb://appuser:FrthgnjunD43xeWi8@34.174.230.159:27017/courts-database?authSource=courts-database"
+"MONGODB_URL","mongodb://appuser:FrthgnjunD43xeWi8@34.174.230.159:27017/courts-database?authSource=courts-database"
     )
     DATABASE_NAME: str = os.getenv("DATABASE_NAME", "courts-database")
     COLLECTION_NAME: str = os.getenv("COLLECTION_NAME", "allcourts")
