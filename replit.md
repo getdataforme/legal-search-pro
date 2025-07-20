@@ -10,9 +10,10 @@ Preferred communication style: Simple, everyday language.
 
 ## System Architecture
 
-### Backend Architecture
-- **Framework**: FastAPI (Python) - chosen for its high performance, automatic API documentation, and built-in data validation
-- **Async Support**: Full async/await implementation using Motor (async MongoDB driver) for non-blocking database operations
+### Full-Stack Architecture
+- **Backend**: FastAPI (Python) - high performance API with automatic documentation and validation
+- **Frontend**: Modern responsive web dashboard with Bootstrap 5, DataTables, and vanilla JavaScript
+- **Database**: MongoDB with Motor async driver for non-blocking operations
 - **API Design**: RESTful API with automatic OpenAPI/Swagger documentation generation
 
 ### Database Architecture
@@ -54,6 +55,14 @@ Preferred communication style: Simple, everyday language.
 - **Search Filter Builder**: Dynamic MongoDB query construction
 - **Input Sanitization**: Protection against injection attacks
 - **Pagination Helpers**: Offset/limit calculation utilities
+
+### 6. Frontend Dashboard (`static/`)
+- **Modern UI**: Responsive Bootstrap 5 interface with professional styling
+- **Case Management**: Table-based view with sorting, filtering, and pagination
+- **Real-time Monitoring**: Live statistics dashboard with case counts and status tracking
+- **Advanced Search**: Multi-field search with date ranges and filter combinations
+- **CRUD Operations**: Add, edit, view, and delete cases through intuitive forms
+- **Data Export**: CSV export functionality for reporting and analysis
 
 ## Data Flow
 
